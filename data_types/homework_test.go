@@ -11,6 +11,7 @@ import (
 
 func ToLittleEndian[T interface{ ~uint32 | ~uint16 | ~uint64 }](number T) T {
 	size := unsafe.Sizeof(number)
+
 	buf := make([]byte, size)
 
 	for i := uintptr(0); i < size; i++ {
