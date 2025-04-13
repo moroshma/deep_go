@@ -11,19 +11,16 @@ import (
 
 func ToLittleEndian[T interface{ ~uint32 | ~uint16 | ~uint64 }](number T) T {
 	size := unsafe.Sizeof(number)
-
-	buf := make([]byte, size)
-
-	for i := uintptr(0); i < size; i++ {
-		buf[i] = *(*byte)(unsafe.Pointer(uintptr(unsafe.Pointer(&number)) + i))
-	}
+	result := number
+	ptr := unsafe.Pointer(&result)
 
 	for i := 0; i < int(size)/2; i++ {
-		j := int(size) - 1 - i
-		buf[i], buf[j] = buf[j], buf[i]
+		low := (*byte)(unsafe.Pointer(uintptr(ptr) + uintptr(i)))
+		high := (*byte)(unsafe.Pointer(uintptr(ptr) + size - 1 - uintptr(i)))
+		*low, *high = *high, *low
 	}
 
-	return *(*T)(unsafe.Pointer(&buf[0]))
+	return result
 }
 
 func TestСonversion(t *testing.T) {
